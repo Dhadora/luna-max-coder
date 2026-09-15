@@ -6,6 +6,9 @@ do not paste credentials into a prompt. In every example, the primary first
 passes the supervisor and capability gates, then sends one self-contained brief
 to one fresh Luna worker. The worker completes the dependent batch and returns
 compact artifact evidence instead of a transcript.
+Every brief also carries a stable route ID and the cumulative lifetime ledger
+`calls=0/12; failures=0/2; followups=0/1`. Later turns quote the exact ledger;
+they never reset it. A bare resume or stop is terminal.
 
 ## 1. Code change and shell tests
 
@@ -55,11 +58,14 @@ Expected routing:
 
 Supervision and check: The browser limits name the requested browser, target
 URL or app, allowed interactions, no-side-effect confirmation, stopping
-condition, and required evidence.
+condition, required evidence, and any explicitly authorized fallback. The
+worker uses filtered preflight and postflight evidence capped at 4,000
+characters and stops after 90 seconds without an observable state change.
 
 Stop condition: Stop at the Settings heading, on an unavailable browser
 capability, an authentication prompt, an unexpected domain, or any request to
-submit or change data.
+submit or change data. After stop, report from evidence already held without
+another browser or diagnostic call.
 
 ## 3. Windows app or Computer Use task
 

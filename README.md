@@ -63,6 +63,24 @@ edit, one consolidated verification, and at most one targeted repair and
 recheck. Corrections are short deltas to the same worker. A checkpoint remains
 mandatory before a risky or irreversible action.
 
+### Lifetime execution budget
+
+Every delegation now carries a stable route ID and a cumulative ledger with
+default ceilings of 12 tool calls, 2 failed tool calls, and 1 correction. The
+ledger covers the full worker thread and cannot reset on interruption,
+compaction, correction, handoff, or a later turn. A bare `RESUME`, an
+inconsistent ledger, an exhausted budget, `STOP`, or a terminal handoff ends
+the route instead of silently starting another execution loop. Only explicit
+user approval in the original delegation may raise a default. Success, stop,
+safety, and exhausted-budget handoffs are terminal; a nonterminal handoff is
+reserved for the one repairable correction that still has budget.
+
+Interactive work also stops after 90 seconds without an observable state
+change. Each tool result is limited to 4,000 characters, raw DOM and large
+source or log dumps are excluded, and browser-control fallbacks must be named
+in the original brief. `STOP` allows no cleanup or status-inspection call; the
+worker reports only evidence it already holds.
+
 This minimizes fixed delegation overhead but does not guarantee fewer raw
 tokens on every task. Small tasks can cost more when delegated, and cached-input
 savings affect cost rather than reported total tokens. Maximum-supervision mode
@@ -79,10 +97,12 @@ You need:
 - the capabilities required by your task already available to Codex.
 
 The plugin does not provide a model, install browser or MCP access, grant
-permissions, or create an operating-system security boundary. The workflow is
-instruction-level enforcement. Use a separate process or permission boundary
-when adversarial enforcement is required. The runtime role and installer are
-Windows-focused. Python is used by CI for data-file validation, not at runtime.
+permissions, or create an operating-system security boundary. The budget is an
+instruction-level contract backed by deterministic policy regression tests; it
+cannot technically intercept a model or built-in tool that ignores the
+contract. Use a separate process or permission boundary when adversarial hard
+enforcement is required. The runtime role and installer are Windows-focused.
+Python is used by CI for data-file validation, not at runtime.
 
 ## Install from a source checkout
 
@@ -146,6 +166,9 @@ when you no longer need this source.
   install or guarantee capabilities.
 - If a role, capability, authorization, or confirmation is unavailable, do not
   use a fallback. Resolve the boundary in the primary conversation.
+- Do not send `RESUME` after a stop or terminal handoff. Start a new route only
+  after the user explicitly authorizes a new attempt and the primary records a
+  new scope and budget.
 
 ## Validation and examples
 
@@ -155,9 +178,9 @@ Run the repository verifier from the root:
 pwsh -NoProfile -File .\plugins\luna-max-coder\scripts\verify.ps1
 ~~~
 
-See [examples/README.md](examples/README.md) for complete conversational
-demos. Report security issues through the process in [SECURITY.md](SECURITY.md)
-and review the attribution in
+See [examples/README.md](examples/README.md) for complete conversational demos
+and [CHANGELOG.md](CHANGELOG.md) for version history. Report security issues
+through the process in [SECURITY.md](SECURITY.md) and review the attribution in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Benchmarks

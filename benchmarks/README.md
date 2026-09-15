@@ -64,6 +64,26 @@ fell **77.9%**.
 The previous record remains available as
 [runtime-results-v1.json](runtime-results-v1.json).
 
+## Interactive browser guardrail replay
+
+An anonymized interactive stress run exposed a cross-turn failure mode that the
+original single-batch wording did not prevent. The worker continued across six
+turns and recorded 66 tool-related calls, including 12 failed calls. Its final
+reported cumulative total was 7,410,225 tokens: 7,359,067 input tokens,
+7,091,200 cached input tokens, and 51,158 output tokens. Reasoning output is
+already included in output.
+
+Version 0.2.0 adds one worker-lifetime ledger that does not reset on a resume,
+correction, interruption, compaction, or later turn. The deterministic replay
+in the repository verifies that the same aggregate is stopped no later than the
+twelfth tool call or second failed call, that a bare resume cannot reset the
+ledger, and that stop permits no additional tool call. This is a policy replay,
+not a second live-model benchmark.
+
+The sanitized machine-readable aggregate and policy limits are in
+[browser-guardrail.json](browser-guardrail.json). Reported cumulative tokens
+include cached input and are not equivalent to billing or subscription usage.
+
 ## Final-request footprint
 
 For comparison with the earlier pilot, the final per-request usage record

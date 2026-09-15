@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "measurement_date": "2026-09-15",
+  "description": "Anonymized aggregate from one interactive routed-worker stress run.",
+  "observed": {
+    "worker_turns": 6,
+    "tool_turns": 4,
+    "tool_calls": 66,
+    "failed_tool_calls": 12,
+    "reported_usage": {
+      "input_tokens": 7359067,
+      "cached_input_tokens": 7091200,
+      "uncached_input_tokens": 267867,
+      "output_tokens": 51158,
+      "reasoning_output_tokens": 27132,
+      "total_tokens": 7410225
+    }
+  },
+  "policy": {
+    "max_tool_calls": 12,
+    "max_failed_tool_calls": 2,
+    "max_followups": 1,
+    "no_progress_seconds": 90,
+    "max_tool_result_characters": 4000
+  },
+  "expected_replay": {
+    "stops_no_later_than_tool_call": 12,
+    "executes_no_more_than_failed_tool_calls": 2,
+    "resume_resets_budget": false,
+    "stop_allows_additional_tool_calls": false
+  },
+  "notes": [
+    "Reported cumulative tokens include cached input.",
+    "Token counters are not equivalent to billed usage or subscription consumption.",
+    "No private task content, account identifiers, URLs, secrets, or raw logs are included."
+  ]
+}

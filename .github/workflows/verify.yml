@@ -38,6 +38,7 @@ jobs:
 
           root = Path.cwd()
           json.loads((root / "plugins/luna-max-coder/.codex-plugin/plugin.json").read_text(encoding="utf-8"))
+          json.loads((root / "benchmarks/browser-guardrail.json").read_text(encoding="utf-8"))
           tomllib.loads((root / "plugins/luna-max-coder/agents/luna-max-code-writer.toml").read_text(encoding="utf-8"))
           yaml.safe_load((root / "plugins/luna-max-coder/skills/code-routing/agents/openai.yaml").read_text(encoding="utf-8"))
           print("DATA PARSE PASSED: JSON, TOML, YAML")
@@ -53,6 +54,7 @@ jobs:
             "CODE_OF_CONDUCT.md",
             "CHANGELOG.md",
             "THIRD_PARTY_NOTICES.md",
+            "benchmarks\README.md",
             "examples\README.md",
             "plugins\luna-max-coder\.codex-plugin\plugin.json",
             "plugins\luna-max-coder\agents\luna-max-code-writer.toml",
