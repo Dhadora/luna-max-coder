@@ -123,11 +123,12 @@ tokens.
 ## Reproducing the quality gate
 
 The exact specifications, starter files, and independent verifier are in
-[runtime-harness](runtime-harness). Copy one batch template into a fresh lane,
-let the selected implementation path edit only workload.py, and run:
+[runtime-harness](runtime-harness). Copy one batch template into a fresh lane
+named `batch1-lane`, let the selected implementation path edit only workload.py,
+and run:
 
 ~~~powershell
-python .\runtime-harness\verify.py --batch 1 --root <path-to-batch1-lane>
+python .\runtime-harness\verify.py --batch 1 --root .\batch1-lane
 ~~~
 
 Use batch 2 or 3 with the matching template. The harness reproduces behavior
