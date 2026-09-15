@@ -1,60 +1,126 @@
-# Luna Max Coder benchmark
+# Luna Max Coder benchmarks
+
+## Current bounded-loop protocol
 
 Measurement date: **2026-09-15**
 
-This is a small, paired execution measurement for three implementation tasks. Each task was completed once by a `gpt-5.6-sol` baseline and once by a routed `gpt-5.6-sol` supervisor using the `luna_max_code_writer` / `gpt-5.6-luna` / `max` execution lane. Luna correction turns are included in the task that they corrected.
+Three fresh gpt-5.6-sol / max direct runs were compared with three fresh
+gpt-5.6-sol / max supervisors. Each supervisor delegated one four-task batch
+to exactly one fresh gpt-5.6-luna / max worker. The routed worker budget was one
+batched inspection, one consolidated edit, one consolidated verification, and
+at most one targeted repair and recheck.
 
-The raw machine-readable record is [results.json](results.json). The local audit record also contains the same measurements and turn accounting.
+Across 12 Python standard-library tasks per lane:
 
-## Specifications
+- Advanced Sol cumulative tokens fell from 2,487,921 to 694,280, a **72.1% reduction**.
+- Combined Sol and Luna cumulative tokens fell to 1,765,109, a **29.1% reduction**.
+- Combined uncached input fell from 295,090 to 213,227, a **27.7% reduction**.
+- Both lanes passed the same 159 independent checks.
+- Routed outer task time was 35m14.0s versus 34m57.6s direct, **0.8% slower**.
 
-1. **Range compactor** — validate an integer list (booleans are invalid), sort and deduplicate it, and render runs of at least three consecutive integers as `start-end`; expose the same behavior through a JSON CLI.
-2. **JSONL event summary** — accept records with a non-empty string `status` and a non-negative integer `duration_ms`, count accepted and rejected records, count statuses, and report total and maximum duration with deterministic status-key ordering.
-3. **Deep configuration merge** — recursively merge dictionaries, replace lists/scalars/null values from the override, deep-copy inputs and results, and expose the same behavior through a JSON CLI requiring exactly `base` and `override` objects.
+Two routed Sol preflight turns could not initially spawn their Luna worker.
+Both succeeded on one retry, and both failed turns are included in every
+aggregate. Coordinator, benchmark construction, verification, and reporting
+tokens are excluded.
 
-## Measurement protocol
+The full machine-readable record is
+[runtime-results.json](runtime-results.json).
 
-Usage came from completed `event_msg` records whose `payload.type` is `token_count`. For each completed task turn, the final `payload.info.last_token_usage` record was selected. Luna had five completed usage turns: task 1 plus one correction, task 2 plus one correction, and task 3. The baseline and routed supervisors each had three task turns. Cumulative `total_token_usage` snapshots were not summed. Coordinator, setup, and publication turns were excluded.
+## Cumulative results
 
-The canonical total is `total_tokens`. In the observed events, `total_tokens = input_tokens + output_tokens`; `cached_input_tokens` is part of `input_tokens`, not an additional amount. `cache_write_input_tokens` is reported separately. `reasoning_output_tokens` is part of `output_tokens`.
+Cumulative usage is the final turn_token_usage value for every completed
+benchmark turn, counted once. It includes every model and tool loop. Cached
+input is included in input and total tokens.
 
-Both lanes were run through their own test suites and through the same independent standard-library verifier with 65 checks per lane. The verifier exercises direct APIs, invalid inputs, deep-copy behavior, and CLI behavior without changing the task directories.
+| Batch | Direct Sol | Routed Sol | Luna worker | Routed combined | Sol reduction | Combined reduction | Quality per lane |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 478,309 | 298,617 | 342,765 | 641,382 | 37.6% | -34.1% | 49/49 |
+| 2 | 1,168,636 | 137,086 | 277,051 | 414,137 | 88.3% | 64.6% | 47/47 |
+| 3 | 840,976 | 258,577 | 451,013 | 709,590 | 69.3% | 15.6% | 63/63 |
+| **Total** | **2,487,921** | **694,280** | **1,070,829** | **1,765,109** | **72.1%** | **29.1%** | **159/159** |
 
-## Raw results
+A negative combined reduction in batch 1 means routing used 34.1% more raw
+tokens for that batch. The larger batches outweighed it in this sample.
 
-All values below are token counts from the selected final per-turn usage records. The routed Luna row for tasks 1 and 2 includes its correction turn.
+## Aggregate accounting
 
-| Task | Lane | Completed turns | Input | Cached input | Cache write | Output | Reasoning output | Total |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | Baseline Sol | 1 | 36,341 | 35,712 | 0 | 500 | 432 | 36,841 |
-| 1 | Routed Sol | 1 | 38,452 | 36,992 | 0 | 632 | 504 | 39,084 |
-| 1 | Routed Luna | 2 | 82,101 | 80,384 | 0 | 2,532 | 1,148 | 84,633 |
-| 2 | Baseline Sol | 1 | 42,323 | 41,728 | 0 | 197 | 131 | 42,520 |
-| 2 | Routed Sol | 1 | 45,900 | 44,928 | 0 | 432 | 296 | 46,332 |
-| 2 | Routed Luna | 2 | 113,772 | 112,128 | 0 | 2,764 | 185 | 116,536 |
-| 3 | Baseline Sol | 1 | 47,954 | 47,232 | 0 | 189 | 123 | 48,143 |
-| 3 | Routed Sol | 1 | 50,533 | 48,128 | 0 | 1,033 | 886 | 51,566 |
-| 3 | Routed Luna | 1 | 70,830 | 70,400 | 0 | 2,596 | 511 | 73,426 |
+Reasoning output is a subset of output and is not added again.
 
-### Raw aggregate
-
-| Lane | Input | Cached input | Cache write | Output | Reasoning output | Total |
+| Lane | Input | Cached input | Uncached input | Output | Reasoning output | Total |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Baseline Sol | 126,618 | 124,672 | 0 | 886 | 686 | 127,504 |
-| Routed Sol | 134,885 | 130,048 | 0 | 2,097 | 1,686 | 136,982 |
-| Routed Luna | 266,703 | 262,912 | 0 | 7,892 | 1,844 | 274,595 |
+| Direct Sol | 2,397,746 | 2,102,656 | 295,090 | 90,175 | 57,442 | 2,487,921 |
+| Routed Sol | 683,272 | 588,032 | 95,240 | 11,008 | 7,546 | 694,280 |
+| Luna worker | 977,123 | 859,136 | 117,987 | 93,706 | 56,286 | 1,070,829 |
+| Routed combined | 1,660,395 | 1,447,168 | 213,227 | 104,714 | 63,832 | 1,765,109 |
 
-## Derived results
+## Why the loop budget matters
 
-Advanced-model token change (a positive value would be savings; a negative value means no savings) is **Baseline Sol total − Routed Sol total**. A negative value means the routed supervisor used more tokens. Combined routed change means **Routed Sol total + Routed Luna total − Baseline Sol total**; a positive value is an increase, not a saving.
+The earlier single-batch protocol passed the same quality gate but consumed
+5,433,430 routed tokens. Luna made 70 model calls, including 41 in batch 3.
+With the explicit loop budget, routed usage fell **67.5%** to 1,765,109 and
+Luna made 20 model calls, a **71.4% reduction**. Luna cumulative tokens alone
+fell **77.9%**.
 
-| Task | Advanced Sol savings (negative = no savings) | Savings % (negative = no savings) | Routed combined total | Combined delta | Delta % |
+The previous record remains available as
+[runtime-results-v1.json](runtime-results-v1.json).
+
+## Final-request footprint
+
+For comparison with the earlier pilot, the final per-request usage record
+before each completed turn was also summed. This is a context-footprint
+snapshot, not cumulative consumption.
+
+| Lane | Completed turns | Input | Cached input | Output | Total |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 1 | -2,243 | -6.1% | 123,717 | +86,876 | +235.8% |
-| 2 | -3,812 | -9.0% | 162,868 | +120,348 | +283.0% |
-| 3 | -3,423 | -7.1% | 124,992 | +76,849 | +159.6% |
-| **Aggregate** | **-9,478** | **-7.4%** | **411,577** | **+284,073** | **+222.8%** |
+| Direct Sol | 5 | 317,797 | 245,760 | 9,062 | 326,859 |
+| Routed Sol | 5 | 182,347 | 169,472 | 3,936 | 186,283 |
+| Luna worker | 3 | 182,482 | 174,336 | 7,420 | 189,902 |
+| Routed combined | 8 | 364,829 | 343,808 | 11,356 | 376,185 |
 
-## Interpretation and limitations
+Advanced Sol fell **43.0%** on this narrower metric, while routed combined
+rose **15.1%**. The two failed preflight turns make this terminal snapshot
+especially conservative.
 
-Across these three observations, this small-task sample found no token savings: Routed Sol increased from 127,504 to 136,982 (+9,478, +7.4%). Including Luna execution, combined Sol+Luna was 411,577 (+284,073, +222.8%). These are three paired implementation tasks with one observation per task, not a statistically significant model benchmark or a general cost claim. The tasks had heavy cached context and include delegation/report overhead; results are dependent on environment, date, prompt/context, cache state, correction behavior, and implementation details.
+## Quality notes
+
+The direct lane needed one TTL correction and one configuration-type
+correction. The routed lane needed no correction from the independent verifier.
+Batch 1 used one targeted worker repair and exceeded the intended verification
+attempt ceiling because its own harness failed twice. In batch 3, the worker
+reported a false-negative self-check, but the unchanged implementation passed
+all 63 independent checks.
+
+## Static context measurement
+
+The benchmarked pre-budget revision reduced its four fixed routing files from
+15,451 to 9,640 UTF-8 bytes, **37.61%**. Adding the explicit loop budget brings
+the current installed context to 10,175 bytes, still **34.15%** below the
+original. The public export is seven bytes smaller because its manifest uses a
+shorter version string. See
+[context-overhead.json](context-overhead.json). File bytes are not model
+tokens.
+
+## Reproducing the quality gate
+
+The exact specifications, starter files, and independent verifier are in
+[runtime-harness](runtime-harness). Copy one batch template into a fresh lane,
+let the selected implementation path edit only workload.py, and run:
+
+~~~powershell
+python .\runtime-harness\verify.py --batch 1 --root <path-to-batch1-lane>
+~~~
+
+Use batch 2 or 3 with the matching template. The harness reproduces behavior
+checks, not Codex token counters; those come from local completed-turn usage
+records.
+
+## Limitations
+
+This is a preliminary engineering benchmark with three paired batches and 12
+task units per lane, not a statistically powered model study. The bounded
+routed runs happened after the baseline runs, so cache and time effects are not
+fully counterbalanced. Results depend on environment, prompts, cache state,
+model behavior, and tool-loop count. Subscription usage cannot be inferred
+directly from these token fields.
+
+The original three-task pilot remains in [results.json](results.json).

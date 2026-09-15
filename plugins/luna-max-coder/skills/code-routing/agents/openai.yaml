@@ -1,18 +1,11 @@
 interface:
   display_name: "Luna Max Code Routing"
-  short_description: "Keep a ranked non-Luna advanced primary; execute with Luna Max"
+  short_description: "Plan with an advanced primary; batch execution through Luna Max"
   default_prompt: >-
-    Use $code-routing to establish an accepted non-Luna advanced supervisor from
-    exposed Codex metadata: gpt-6-astra, gpt-5.6-sol, gpt-5.6-terra, or a future
-    model explicitly ranked above gpt-5.6-luna. Primary reasoning effort does
-    not change the ranking. Reject Luna, unknown, and unranked identities; do
-    not infer that every non-Luna model is advanced. Verify every requested
-    capability, including browser, Computer Use, MCP, web, and image-generation;
-    this plugin routes existing capabilities but does not install or guarantee
-    them. The primary may run only the provided non-mutating
-    install-agent.ps1 -Check bootstrap before delegation; this is the sole
-    terminal exception. After delegation, route every permitted execution
-    category and shell command through GPT-5.6 Luna / Max with
-    primary-controlled permissions, bounded confirmations, and observable proof.
+    Use $code-routing. Verify the accepted non-Luna primary, exact Luna Max role,
+    requested capabilities, permissions, and confirmations. Then use one fresh
+    Luna worker and one complete batch, pass artifacts instead of transcripts,
+    run deterministic checks, and return for one final advanced-primary review.
+    Route all code, shell, browser, Windows, web, and MCP execution through Luna.
 policy:
   allow_implicit_invocation: true

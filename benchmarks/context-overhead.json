@@ -1,0 +1,55 @@
+{
+  "schema_version": 2,
+  "measurement_date": "2026-09-15",
+  "metric": "file_bytes",
+  "encoding": "UTF-8",
+  "scope": [
+    "plugin manifest",
+    "Luna native role",
+    "code-routing skill",
+    "skill interface metadata"
+  ],
+  "before": {
+    "manifest": 2739,
+    "agent_role": 4398,
+    "skill": 7206,
+    "skill_interface": 1108,
+    "total": 15451
+  },
+  "benchmarked_protocol": {
+    "manifest": 1442,
+    "agent_role": 2156,
+    "skill": 5439,
+    "skill_interface": 603,
+    "total": 9640
+  },
+  "benchmarked_reduction": {
+    "bytes": 5811,
+    "percent": 37.61
+  },
+  "current_loop_budget_protocol": {
+    "manifest": 1442,
+    "agent_role": 2469,
+    "skill": 5661,
+    "skill_interface": 603,
+    "total": 10175,
+    "reduction_bytes": 5276,
+    "reduction_percent": 34.15
+  },
+  "public_export": {
+    "manifest": 1435,
+    "agent_role": 2469,
+    "skill": 5661,
+    "skill_interface": 603,
+    "total": 10168,
+    "reduction_bytes": 5283,
+    "reduction_percent": 34.19
+  },
+  "limitations": [
+    "File bytes are not model tokens.",
+    "The measurement excludes platform instructions, tool schemas, user context, cache behavior, worker reports, and execution output.",
+    "Runtime results are reported separately in runtime-results.json; this static measurement alone is not evidence of runtime savings.",
+    "The benchmarked installed manifest includes a seven-byte-longer build version than the public export.",
+    "The current protocol adds an explicit bounded-loop rule after the paired benchmark; its runtime effect requires a follow-up measurement."
+  ]
+}

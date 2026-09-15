@@ -1,11 +1,16 @@
 [CmdletBinding()]
 param(
     [string]$TargetDir,
-    [switch]$Check
+    [switch]$Check,
+    [switch]$Update
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+if ($Check -and $Update) {
+    throw "Use either -Check or -Update, not both."
+}
 
 $pluginDir = Split-Path -Parent $PSScriptRoot
 $source = Join-Path $pluginDir "agents\luna-max-code-writer.toml"
@@ -78,7 +83,29 @@ if (Test-Path -LiteralPath $destination) {
         Write-Output "ALREADY CURRENT: $destination"
         return
     }
-    throw "Refusing to overwrite a different Luna agent file: $destination"
+    if (-not $Update) {
+        throw "Refusing to overwrite a different Luna agent file without -Update: $destination"
+    }
+
+    $backup = $destination + ".before-update." +
+        (Get-Date).ToUniversalTime().ToString("yyyyMMddTHHmmssfffZ") + "." +
+        [guid]::NewGuid().ToString("N") + ".bak"
+    $staged = Join-Path $targetFull (".luna-max-code-writer." + [guid]::NewGuid().ToString("N") + ".tmp")
+    try {
+        [IO.File]::Copy($source, $staged, $false)
+        [IO.File]::Replace($staged, $destination, $backup, $true)
+    } finally {
+        if (Test-Path -LiteralPath $staged) {
+            Remove-Item -LiteralPath $staged -Force
+        }
+    }
+
+    if (-not (Test-ExactTemplate)) {
+        throw "Post-update exactness check failed: $destination"
+    }
+    Write-Output "UPDATE PASSED: $destination"
+    Write-Output "BACKUP: $backup"
+    return
 }
 
 $staged = Join-Path $targetFull (".luna-max-code-writer." + [guid]::NewGuid().ToString("N") + ".tmp")

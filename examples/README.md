@@ -3,8 +3,9 @@
 These examples use generic targets and existing capabilities. Replace a target
 with one that exists in your current task, keep the owned scope explicit, and
 do not paste credentials into a prompt. In every example, the primary first
-passes the supervisor and capability gates, then sends the complete delegation
-brief to the same Luna worker.
+passes the supervisor and capability gates, then sends one self-contained brief
+to one fresh Luna worker. The worker completes the dependent batch and returns
+compact artifact evidence instead of a transcript.
 
 ## 1. Code change and shell tests
 
@@ -13,7 +14,7 @@ User prompt:
 ~~~text
 Add the smallest input-validation guard needed for the reported failure. Limit
 the change to the existing validator and its focused test, then run the
-repository's existing test command and report the diff and output.
+repository's existing test command and report changed paths and test counts.
 ~~~
 
 Expected routing:
@@ -21,11 +22,13 @@ Expected routing:
 - The primary selects the guard and the exact source and test targets.
 - Luna edits only those targets and runs the test command, because code changes
   and every shell command belong to the execution lane.
-- The primary reviews the complete diff and the observable test output.
+- The primary reviews the workspace diff and concise test evidence once at the
+  end.
 
 Supervision and check: The packet names the outcome, owned targets, exclusions,
 permitted command, read-only status, required test output, and stop conditions.
-The worker returns the changed paths and the actual test result.
+The worker returns paths, hashes, and the actual test count without pasting the
+diff or raw test log.
 
 Stop condition: Stop if the validator or test target is ambiguous, the command
 is unavailable, the scope expands, or the test needs an unapproved dependency
@@ -47,8 +50,8 @@ Expected routing:
   supplies the bounded page target.
 - Luna performs discovery, navigation, selection, and visible inspection in
   one browser worker.
-- The worker returns the current URL and a screenshot or equivalent visible
-  result; the primary checks that evidence against the requested heading.
+- The worker returns the current URL and a screenshot path or equivalent compact
+  result; the primary checks only the needed evidence against the heading.
 
 Supervision and check: The browser limits name the requested browser, target
 URL or app, allowed interactions, no-side-effect confirmation, stopping
@@ -72,7 +75,7 @@ Expected routing:
 - The primary checks that Windows Computer Use is available and defines the
   Calculator-only boundary.
 - Luna opens the app, enters the expression, and reads the visible result.
-- The primary checks the returned screenshot or visible UI evidence.
+- The primary checks the returned screenshot path or visible UI evidence.
 
 Supervision and check: The packet records the app, expression, allowed input,
 read-only side effects, evidence requirement, and the stopping condition.

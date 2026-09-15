@@ -52,6 +52,23 @@ normal authorization or user-confirmation boundary is established. Luna never
 bypasses authentication or a required confirmation. If a role, model ranking,
 requested capability, or confirmation is unavailable, routing fails closed.
 
+## Token-saving route
+
+The default route uses one primary plan, one self-contained handoff to one fresh
+Luna worker, one complete dependent execution batch, deterministic checks, and
+one final primary review. Luna passes artifact paths, hashes, check counts,
+decisions, and gaps instead of pasting code, diffs, logs, DOM, or screenshots.
+Inside the batch, Luna defaults to one batched inspection, one consolidated
+edit, one consolidated verification, and at most one targeted repair and
+recheck. Corrections are short deltas to the same worker. A checkpoint remains
+mandatory before a risky or irreversible action.
+
+This minimizes fixed delegation overhead but does not guarantee fewer raw
+tokens on every task. Small tasks can cost more when delegated, and cached-input
+savings affect cost rather than reported total tokens. Maximum-supervision mode
+adds checkpoints when requested or required and prioritizes control over token
+savings.
+
 ## Prerequisites and limitations
 
 You need:
@@ -104,6 +121,9 @@ installed plugin, and add it again:
 pwsh -NoProfile -File .\plugins\luna-max-coder\scripts\verify.ps1
 codex plugin remove luna-max-coder@luna-max-coder
 codex plugin add luna-max-coder@luna-max-coder
+$plugin = (codex plugin list --json | ConvertFrom-Json).installed |
+  Where-Object pluginId -eq "luna-max-coder@luna-max-coder"
+& (Join-Path $plugin.source.path "scripts\install-agent.ps1") -Update
 ~~~
 
 Start a new conversation after the reinstallation. To uninstall the plugin,
@@ -115,8 +135,9 @@ when you no longer need this source.
 
 - Check discovery with `codex plugin list --json`.
 - Resolve the installed plugin path from that output and run
-  `install-agent.ps1 -Check`. The installer refuses to overwrite a different
-  role file; preserve an existing conflicting file and resolve it deliberately.
+  `install-agent.ps1 -Check`. During an intentional plugin upgrade, use
+  `install-agent.ps1 -Update`; it preserves the previous role as a timestamped
+  backup before atomic replacement.
 - Run `pwsh -NoProfile -File .\plugins\luna-max-coder\scripts\verify.ps1` from
   the repository root when validation fails.
 - If the primary metadata is missing, unknown, unranked, or identifies Luna,

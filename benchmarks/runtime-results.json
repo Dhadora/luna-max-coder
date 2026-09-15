@@ -1,0 +1,393 @@
+{
+  "schemaVersion": 2,
+  "experiment": "luna-max-token-saving-loop-budget-v2",
+  "measurementDate": "2026-09-15",
+  "design": {
+    "pairedBatches": 3,
+    "codingTasksPerLane": 12,
+    "baseline": "fresh gpt-5.6-sol at max reasoning, direct implementation",
+    "routed": "fresh gpt-5.6-sol at max reasoning supervising exactly one fresh gpt-5.6-luna at max reasoning",
+    "workerRoundBudget": "one batched inspection, one consolidated edit, one consolidated verification, and at most one targeted repair and recheck",
+    "coordinatorExcluded": true,
+    "qualityGate": "same independent verifier for both lanes",
+    "lunaUse": "routed benchmark implementation arm only",
+    "conservativeAccounting": "Two routed Sol preflight turns that could not initially spawn a worker are included. Both succeeded on one retry."
+  },
+  "metricDefinitions": {
+    "cumulative": "Final token_usage_record.payload.turn_token_usage for every completed benchmark turn, counted once and summed. Includes every model and tool loop in the turn.",
+    "terminal": "Final token_usage_record.payload.usage immediately before each completed turn, counted once and summed. This is the last model-request footprint, not total consumption.",
+    "uncachedInput": "input_tokens minus cached_input_tokens",
+    "reasoning": "reasoning_output_tokens is a subset of output_tokens and is not added to total_tokens",
+    "wallTime": "Sum of outer Sol task durations. Nested Luna duration is not added."
+  },
+  "routedRawRecords": [
+    {
+      "batch": 1,
+      "lane": "routed-supervisor",
+      "model": "gpt-5.6-sol",
+      "turnKind": "preflight-retry-required",
+      "durationMs": 73990,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "cumulative": {
+        "input": 97665,
+        "cachedInput": 63104,
+        "uncachedInput": 34561,
+        "output": 2364,
+        "reasoning": 1909,
+        "total": 100029
+      },
+      "terminal": {
+        "input": 34197,
+        "cachedInput": 33280,
+        "uncachedInput": 917,
+        "output": 215,
+        "reasoning": 92,
+        "total": 34412
+      }
+    },
+    {
+      "batch": 1,
+      "lane": "routed-supervisor",
+      "model": "gpt-5.6-sol",
+      "turnKind": "implementation-supervision",
+      "durationMs": 561599,
+      "modelCalls": 5,
+      "toolCalls": 1,
+      "cumulative": {
+        "input": 195462,
+        "cachedInput": 176896,
+        "uncachedInput": 18566,
+        "output": 3126,
+        "reasoning": 2171,
+        "total": 198588
+      },
+      "terminal": {
+        "input": 47749,
+        "cachedInput": 37248,
+        "uncachedInput": 10501,
+        "output": 1901,
+        "reasoning": 1698,
+        "total": 49650
+      }
+    },
+    {
+      "batch": 1,
+      "lane": "routed-worker",
+      "model": "gpt-5.6-luna",
+      "turnKind": "worker",
+      "durationMs": 478935,
+      "modelCalls": 7,
+      "toolCalls": 6,
+      "execCommands": 4,
+      "patchCalls": 2,
+      "cumulative": {
+        "input": 317708,
+        "cachedInput": 286976,
+        "uncachedInput": 30732,
+        "output": 25057,
+        "reasoning": 15954,
+        "total": 342765
+      },
+      "terminal": {
+        "input": 56359,
+        "cachedInput": 52992,
+        "uncachedInput": 3367,
+        "output": 500,
+        "reasoning": 316,
+        "total": 56859
+      }
+    },
+    {
+      "batch": 2,
+      "lane": "routed-supervisor",
+      "model": "gpt-5.6-sol",
+      "turnKind": "implementation-supervision",
+      "durationMs": 532844,
+      "modelCalls": 4,
+      "toolCalls": 1,
+      "cumulative": {
+        "input": 134335,
+        "cachedInput": 129024,
+        "uncachedInput": 5311,
+        "output": 2751,
+        "reasoning": 1648,
+        "total": 137086
+      },
+      "terminal": {
+        "input": 34767,
+        "cachedInput": 34304,
+        "uncachedInput": 463,
+        "output": 789,
+        "reasoning": 613,
+        "total": 35556
+      }
+    },
+    {
+      "batch": 2,
+      "lane": "routed-worker",
+      "model": "gpt-5.6-luna",
+      "turnKind": "worker",
+      "durationMs": 458120,
+      "modelCalls": 6,
+      "toolCalls": 5,
+      "execCommands": 2,
+      "patchCalls": 2,
+      "cumulative": {
+        "input": 253338,
+        "cachedInput": 229888,
+        "uncachedInput": 23450,
+        "output": 23713,
+        "reasoning": 14762,
+        "total": 277051
+      },
+      "terminal": {
+        "input": 50298,
+        "cachedInput": 48896,
+        "uncachedInput": 1402,
+        "output": 5872,
+        "reasoning": 5695,
+        "total": 56170
+      }
+    },
+    {
+      "batch": 3,
+      "lane": "routed-supervisor",
+      "model": "gpt-5.6-sol",
+      "turnKind": "preflight-retry-required",
+      "durationMs": 61640,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "cumulative": {
+        "input": 153970,
+        "cachedInput": 121984,
+        "uncachedInput": 31986,
+        "output": 1466,
+        "reasoning": 1128,
+        "total": 155436
+      },
+      "terminal": {
+        "input": 31259,
+        "cachedInput": 30848,
+        "uncachedInput": 411,
+        "output": 360,
+        "reasoning": 210,
+        "total": 31619
+      }
+    },
+    {
+      "batch": 3,
+      "lane": "routed-supervisor",
+      "model": "gpt-5.6-sol",
+      "turnKind": "implementation-supervision",
+      "durationMs": 883952,
+      "modelCalls": 3,
+      "toolCalls": 0,
+      "cumulative": {
+        "input": 101840,
+        "cachedInput": 97024,
+        "uncachedInput": 4816,
+        "output": 1301,
+        "reasoning": 690,
+        "total": 103141
+      },
+      "terminal": {
+        "input": 34375,
+        "cachedInput": 33792,
+        "uncachedInput": 583,
+        "output": 671,
+        "reasoning": 489,
+        "total": 35046
+      }
+    },
+    {
+      "batch": 3,
+      "lane": "routed-worker",
+      "model": "gpt-5.6-luna",
+      "turnKind": "worker",
+      "durationMs": 851493,
+      "modelCalls": 7,
+      "toolCalls": 6,
+      "execCommands": 3,
+      "patchCalls": 2,
+      "cumulative": {
+        "input": 406077,
+        "cachedInput": 342272,
+        "uncachedInput": 63805,
+        "output": 44936,
+        "reasoning": 25570,
+        "total": 451013
+      },
+      "terminal": {
+        "input": 75825,
+        "cachedInput": 72448,
+        "uncachedInput": 3377,
+        "output": 1048,
+        "reasoning": 867,
+        "total": 76873
+      }
+    }
+  ],
+  "aggregate": {
+    "baselineSol": {
+      "completedTurns": 5,
+      "cumulative": {
+        "input": 2397746,
+        "cachedInput": 2102656,
+        "uncachedInput": 295090,
+        "output": 90175,
+        "reasoning": 57442,
+        "total": 2487921
+      },
+      "terminal": {
+        "input": 317797,
+        "cachedInput": 245760,
+        "uncachedInput": 72037,
+        "output": 9062,
+        "reasoning": 8663,
+        "total": 326859
+      },
+      "outerDurationMs": 2097566
+    },
+    "routedSolSupervisor": {
+      "completedTurns": 5,
+      "modelCalls": 20,
+      "cumulative": {
+        "input": 683272,
+        "cachedInput": 588032,
+        "uncachedInput": 95240,
+        "output": 11008,
+        "reasoning": 7546,
+        "total": 694280
+      },
+      "terminal": {
+        "input": 182347,
+        "cachedInput": 169472,
+        "uncachedInput": 12875,
+        "output": 3936,
+        "reasoning": 3102,
+        "total": 186283
+      },
+      "outerDurationMs": 2114025
+    },
+    "routedLunaWorker": {
+      "completedTurns": 3,
+      "modelCalls": 20,
+      "toolCalls": 17,
+      "cumulative": {
+        "input": 977123,
+        "cachedInput": 859136,
+        "uncachedInput": 117987,
+        "output": 93706,
+        "reasoning": 56286,
+        "total": 1070829
+      },
+      "terminal": {
+        "input": 182482,
+        "cachedInput": 174336,
+        "uncachedInput": 8146,
+        "output": 7420,
+        "reasoning": 6878,
+        "total": 189902
+      },
+      "nestedWorkerDurationMs": 1788548
+    },
+    "routedCombined": {
+      "completedTurns": 8,
+      "modelCalls": 40,
+      "cumulative": {
+        "input": 1660395,
+        "cachedInput": 1447168,
+        "uncachedInput": 213227,
+        "output": 104714,
+        "reasoning": 63832,
+        "total": 1765109
+      },
+      "terminal": {
+        "input": 364829,
+        "cachedInput": 343808,
+        "uncachedInput": 21021,
+        "output": 11356,
+        "reasoning": 9980,
+        "total": 376185
+      },
+      "outerDurationMs": 2114025
+    }
+  },
+  "perBatch": [
+    {
+      "batch": 1,
+      "checksPerLane": 49,
+      "baselineTotal": 478309,
+      "routedSolTotal": 298617,
+      "routedLunaTotal": 342765,
+      "routedCombinedTotal": 641382,
+      "advancedSolReductionPercent": 37.5682,
+      "combinedReductionPercent": -34.0937
+    },
+    {
+      "batch": 2,
+      "checksPerLane": 47,
+      "baselineTotal": 1168636,
+      "routedSolTotal": 137086,
+      "routedLunaTotal": 277051,
+      "routedCombinedTotal": 414137,
+      "advancedSolReductionPercent": 88.2696,
+      "combinedReductionPercent": 64.5624
+    },
+    {
+      "batch": 3,
+      "checksPerLane": 63,
+      "baselineTotal": 840976,
+      "routedSolTotal": 258577,
+      "routedLunaTotal": 451013,
+      "routedCombinedTotal": 709590,
+      "advancedSolReductionPercent": 69.2527,
+      "combinedReductionPercent": 15.623
+    }
+  ],
+  "derived": {
+    "advancedModelCumulativeTokenReductionPercent": 72.094,
+    "combinedCumulativeTokenReductionPercent": 29.0529,
+    "combinedCumulativeUncachedInputReductionPercent": 27.7417,
+    "advancedModelTerminalTokenReductionPercent": 43.0081,
+    "combinedTerminalTokenChangePercent": 15.0909,
+    "routedOuterWallTimeChangePercent": 0.7847,
+    "workerModelCallReductionVersusV1Percent": 71.4286,
+    "workerCumulativeTokenReductionVersusV1Percent": 77.8622,
+    "combinedCumulativeTokenReductionVersusV1Percent": 67.5139,
+    "currentInstalledCoreContextByteReductionPercent": 34.1467
+  },
+  "quality": {
+    "baseline": {
+      "checksPassed": 159,
+      "checksFailed": 0,
+      "independentVerifierCorrections": 2
+    },
+    "routedV2": {
+      "checksPassed": 159,
+      "checksFailed": 0,
+      "independentVerifierCorrections": 0,
+      "workerTargetedRepairs": 1,
+      "notes": [
+        "Batch 1 exceeded the intended verification-attempt ceiling because two worker harness runs failed before a final passing run.",
+        "Batch 3 worker self-check reported a false negative; the independent 63-check verifier passed without changing the implementation.",
+        "The initial worker-spawn capability was unavailable in batches 1 and 3. Their failed Sol turns are included."
+      ]
+    }
+  },
+  "protocolComparison": {
+    "v1File": "runtime-results-v1.json",
+    "v1RoutedCombinedCumulativeTokens": 5433430,
+    "v2RoutedCombinedCumulativeTokens": 1765109,
+    "v1LunaModelCalls": 70,
+    "v2LunaModelCalls": 20
+  },
+  "interpretation": {
+    "advancedModel": "The bounded routing protocol materially reduced advanced Sol token use.",
+    "overallRawTokens": "The bounded routing protocol reduced combined raw cumulative tokens by 29.1% in this sample while preserving the independent quality gate.",
+    "terminalFootprint": "The final-request footprint rose 15.1% because completed preflight retry turns are included; this metric is not cumulative consumption.",
+    "uncachedInput": "Combined uncached input fell 27.7%, but subscription quota conversion is not established by this benchmark.",
+    "confidence": "Preliminary engineering benchmark: three paired batches and twelve task units per lane, not a statistically powered study."
+  }
+}

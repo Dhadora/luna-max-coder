@@ -1,140 +1,116 @@
 ---
 name: code-routing
-description: "Use for implementation, testing, configuration, routine tool work, or interactive browser control. Keep the selected non-Luna primary as advanced supervisor and route execution to GPT-5.6 Luna / Max."
+description: "Route implementation and tool execution to GPT-5.6 Luna / Max while an accepted non-Luna primary plans, controls risk, and reviews. Uses a low-overhead single-batch protocol by default."
 ---
 
 # Luna Max Code Routing
 
-The user-selected non-Luna primary model is the advanced supervisor only when
-exposed Codex product or runtime metadata establishes that it is an accepted
-advanced model. It owns requirements, planning, architecture, decomposition,
-research synthesis, risk and permission decisions, required user confirmations,
-review, and final acceptance. Keep that primary unchanged. Never silently
-switch it or create a fixed paid reviewer.
+Keep the user-selected non-Luna primary unchanged as the advanced supervisor. It owns requirements,
+architecture, planning, research synthesis, risk and permission decisions,
+required confirmations, review, and final acceptance. The exact native role
+`luna_max_code_writer`, pinned to `gpt-5.6-luna` with max reasoning, owns routed
+execution.
 
-## Supervisor gate
+## Gate
 
-Before the first delegation, establish the primary model from exposed Codex
-product or runtime metadata. Accept these currently ranked advanced supervisor
-families: `gpt-6-astra`, `gpt-5.6-sol`, and `gpt-5.6-terra`; the primary's
-reasoning effort does not change this gate. A future model qualifies only when
-exposed metadata explicitly describes it as more capable than
-`gpt-5.6-luna`. Reject `gpt-5.6-luna`, unknown identities, and unranked models.
-Do not infer that every non-Luna model is advanced. If the identity or ranking
-is not exposed, stop before claiming this invariant or delegating work and
-state that the advanced-supervisor identity must be established. Never silently
-switch the primary or add a reviewer.
+Establish the primary from exposed Codex product or runtime metadata before
+delegating. Accept `gpt-6-astra`, `gpt-5.6-sol`, and `gpt-5.6-terra`; reasoning
+effort does not affect the ranking. A future model qualifies only when exposed
+metadata explicitly ranks it above `gpt-5.6-luna`. Reject `gpt-5.6-luna`,
+unknown identities, and unranked models. If identity or ranking is not exposed,
+fail closed. Never silently switch the primary or add a fixed reviewer.
 
-Resolve the Windows companion role relative to this skill and run its
-non-mutating preflight before routed work:
+From this skill directory, run the sole terminal bootstrap exception:
 
 ~~~powershell
-# Run this from the installed code-routing skill directory.
 $skillPath = Resolve-Path ".\SKILL.md"
 $skillDir = Split-Path -Parent $skillPath
 $installer = Join-Path $skillDir "..\..\scripts\install-agent.ps1"
 & $installer -Check
 ~~~
 
-The preflight must identify the exact native role
-`luna_max_code_writer`, pinned to `gpt-5.6-luna` with max reasoning. The
-primary may run this provided non-mutating `install-agent.ps1 -Check` bootstrap
-before Luna is available; it is the sole terminal bootstrap exception. After
-delegation, every shell or terminal command routes to Luna. The primary may
-perform narrow read-only acceptance inspection, but it does not resume shell
-execution.
+The check must identify the exact role, model, and effort above. Also confirm
+that the worker exposes every capability the task needs. This plugin routes
+existing browser, Computer Use, MCP, web, image-generation, and other tools; it
+does not install or guarantee them. Stop on any missing capability or failed
+gate. Never fall back to the primary or another execution model.
 
-Before task execution, enumerate every capability the task requests and confirm
-that the worker has each one, including browser, Computer Use, MCP, web, and
-image-generation capabilities. The plugin routes existing capabilities; it
-does not install or guarantee them. If preflight, role discovery, model ranking,
-capability discovery, or any requested capability fails, stop and report the
-specific gap. Never fall back to the primary, a built-in role, Terra, Sol, or
-another model.
+## Default token-saving route
+
+Use this route unless the user requests maximum supervision or task risk
+requires another checkpoint:
+
+1. **Plan once.** The primary fixes scope, architecture, permissions, risk, and
+   observable acceptance criteria before delegation.
+2. **Start one fresh worker.** When the brief is self-contained, spawn
+   `luna_max_code_writer` with `fork_turns: "none"`. Put only necessary
+   conversation facts in the brief; never forward the full transcript.
+3. **Batch dependent work.** Send one complete handoff. The same worker performs
+   the dependent code, shell, browser, UI, and MCP loop. Do not micro-delegate,
+   request routine status reports, or add workers unless work is genuinely
+   independent and non-overlapping. Default to one batched inspection, one
+   consolidated edit, and one consolidated verification. Allow one targeted
+   repair and recheck; if it still fails, return the gap instead of continuing
+   an open-ended tool loop.
+4. **Pass artifacts, not transcripts.** Luna writes outputs and evidence to the
+   owned paths. A normal successful handoff is at most 1,200 characters and
+   contains status, changed paths, checks, hashes or other proof, decisions, and
+   gaps. Do not paste code, diffs, raw logs, DOM, or screenshots unless the
+   primary requests targeted evidence or a failure cannot be explained without
+   it.
+5. **Verify, then review once.** Luna runs deterministic checks before handoff.
+   The primary performs one final review. Add an intermediate checkpoint only
+   before a high-impact or irreversible action. Send corrections to the same
+   worker as a minimal delta without repeating the task.
+
+This protocol minimizes fixed handoff and context overhead; it does not promise
+fewer raw tokens on every task. Small tasks can cost more when delegated.
+Prompt caching can reduce cached-input cost without reducing reported total
+tokens. Describe measured savings only with paired evidence.
+
+If maximum supervision is requested or required by risk, add explicit review
+checkpoints and report that this mode prioritizes control over token savings.
 
 ## Routed execution
 
-After the supervisor gate passes, the one Luna worker is the sole execution lane
-for every category below:
+After the gate, Luna is the sole lane for:
 
-- Every code-producing or code/config/test/build artifact mutation, including
-  formatting, autofix, and generation.
-- Every shell or terminal command, including build, test, lint, typecheck,
-  diagnostics, log collection, process management, and scripted file inspection.
-- Bulk codebase exploration, including file search, call-site discovery,
-  dependency mapping, and routine read-only inspection.
-- Every interactive browser action: browser discovery, setup, recovery, tab or
-  window selection, navigation, visible or interactive page inspection,
-  screenshots, clicks, scrolling, hovering, keypresses or typing, forms and
-  submission, dialogs, uploads, downloads, local web testing, Playwright,
-  DevTools, Browser, Chrome, and Computer Use operations that control a browser.
-- Mechanical Windows app and Computer Use actions outside the browser.
-- Focused web or source collection and routine MCP reads. The primary supplies
-  the research question and later synthesizes conclusions.
-- Bounded MCP writes and external actions only after the primary defines the
-  exact scope, assesses risk, and obtains or records required authorization or
-  user confirmation.
-- Requested bulk extraction, classification, transformation, structured
-  reporting, and image-generation tool execution or variant production. The
-  primary chooses the concept, constraints, and accepted result.
+- code, configuration, tests, builds, generation, formatting, and autofixes;
+- every shell command, diagnostic, test, lint, typecheck, process, log, and
+  scripted or bulk repository inspection;
+- every interactive browser action, local web test, Playwright or DevTools
+  operation, and mechanical Windows or Computer Use action;
+- focused source collection, routine MCP reads, approved bounded MCP writes or
+  external actions, bulk transformations, and requested image generation.
 
-The primary may use orchestration tools and the narrow read-only acceptance
-inspection needed to review Luna's evidence. Apart from the provided
-non-mutating installer-check bootstrap above, it must not run a shell command,
-take over bulk execution, control a browser, or author implementation syntax.
-Every correction returns to the same Luna worker.
+The primary may orchestrate and perform narrow read-only acceptance inspection.
+It does not author implementation syntax, run task shell commands, or control a
+browser after delegation. Keep browser state in the same Luna worker.
 
-Keep dependent code, shell, browser, UI, and MCP loops in one worker so state
-and evidence remain continuous. Additional workers are allowed only for
-genuinely independent, non-overlapping work.
+## Task-specific brief
 
-## Delegation brief
+Do not repeat this skill or the role contract. Supply only task-specific values,
+in this order:
 
-Give each worker request this compact brief, in this order:
+1. `OUTCOME`
+2. `OWNED TARGETS`
+3. `CONSTRAINTS AND EXCLUSIONS`
+4. `PERMITTED TOOLS/ACTIONS`
+5. `SIDE-EFFECT / CONFIRMATION STATUS`
+6. `CHECKS / OBSERVABLE PROOF`
+7. `STOP CONDITIONS`
+8. `HANDOFF`
 
-1. `OUTCOME` — the observable result the primary wants.
-2. `OWNED TARGETS` — the exact files, pages, apps, or records the worker may touch.
-3. `CONSTRAINTS AND EXCLUSIONS` — architecture, repository rules, safety limits,
-   and explicitly excluded scope.
-4. `PERMITTED TOOLS/ACTIONS` — the exact commands, tools, and interactions allowed.
-5. `SIDE-EFFECT / CONFIRMATION STATUS` — whether the work is read-only; for any
-   external effect, state its bound and the primary's authorization or user
-   confirmation.
-6. `CHECKS / OBSERVABLE PROOF` — commands or artifacts that must prove the result.
-7. `STOP CONDITIONS` — ambiguity, scope expansion, missing capability,
-   authentication, missing confirmation, or any stated risk that requires return.
-8. `HANDOFF` — the concise status, actions, evidence, decisions needed, and gaps
-   the worker must report.
+Do not omit a field. For browser work, append `BROWSER LIMITS` with the selected
+browser and target URL/app, the one permitted outcome, allowed side effects and
+confirmation state, stopping condition, and required evidence.
 
-Do not omit a field. The brief must be sufficient for the worker to act without
-making a new architecture, permission, or risk decision.
-
-## Browser limits
-
-For any interactive browser delegation, append a `BROWSER LIMITS` block with:
-
-- `selected/requested browser` and `target URL/app`;
-- the single browser outcome and permitted interactions;
-- `allowed side effects` and `confirmation state`;
-- the `stopping condition`; and
-- the `required evidence`, such as a screenshot, URL, downloaded artifact, or
-  visible result.
-
-The worker must stop when the bounded browser objective is met or when a listed
-stop condition occurs. It must not continue into unrelated navigation or
-external-state changes.
-
-## Safety and review
+## Safety
 
 High-impact, destructive, irreversible, credential-bearing, financial,
 public-posting, message-sending, upload, or permission-changing actions remain
-the primary's decision. The primary must establish the normal authorization or
-user-confirmation boundary before the worker performs the exact bounded action.
-The worker never bypasses authentication, unavailable tools, or a required
-confirmation.
-
-If Luna reports ambiguity, expanded scope, unexpected risk, or missing
-confirmation, resolve it in the primary session and send a corrected brief back
-to the same worker. Treat its report as evidence to review, not as automatic
-acceptance. If the exact role, model, effort, or requested capability cannot be
-confirmed, fail closed.
+the primary's decision. Luna may perform only the exact bounded action after the
+primary records required authorization or user confirmation. Never bypass
+authentication. Stop on ambiguity, scope expansion, unexpected risk, missing
+capability, missing confirmation, or unavailable authentication. Treat Luna's
+handoff as evidence, not automatic acceptance.
