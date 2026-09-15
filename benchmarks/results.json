@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "measurement_date": "2026-09-15",
+  "observation_count": 3,
+  "runtime": {
+    "baseline_sol": {"model": "gpt-5.6-sol", "effort": "max", "completed_usage_turns": 3},
+    "routed_sol": {"model": "gpt-5.6-sol", "effort": "max", "completed_usage_turns": 3},
+    "routed_luna": {"role": "luna_max_code_writer", "model": "gpt-5.6-luna", "effort": "max", "completed_usage_turns": 5}
+  },
+  "protocol": {
+    "usage_event": "event_msg.payload.type=token_count",
+    "per_turn_field": "payload.info.last_token_usage",
+    "cumulative_field": "payload.info.total_token_usage",
+    "canonical_total_field": "total_tokens",
+    "turn_selection": "Final token_count event in each completed task turn; cumulative snapshots are never summed.",
+    "excluded_usage": ["root/coordinator turns", "setup turns", "publication turns"],
+    "cache_accounting": "Observed total_tokens=input_tokens+output_tokens. cached_input_tokens is contained within input_tokens and is not additive; cache_write_input_tokens is separate.",
+    "paired_task_note": "Three paired tasks with one observed baseline and one observed routed run per task; not a statistically significant model benchmark. Results depend on environment, date, context, and cache state."
+  },
+  "tasks": [
+    {
+      "id": 1,
+      "name": "range compactor",
+      "turns": {
+        "baseline_sol": {"completed": 1, "corrections": 0},
+        "routed_sol": {"completed": 1, "corrections": 0},
+        "routed_luna": {"completed": 2, "corrections": 1}
+      },
+      "raw": {
+        "baseline_sol": {"input_tokens": 36341, "cached_input_tokens": 35712, "cache_write_input_tokens": 0, "output_tokens": 500, "reasoning_output_tokens": 432, "total_tokens": 36841},
+        "routed_sol": {"input_tokens": 38452, "cached_input_tokens": 36992, "cache_write_input_tokens": 0, "output_tokens": 632, "reasoning_output_tokens": 504, "total_tokens": 39084},
+        "routed_luna": {"input_tokens": 82101, "cached_input_tokens": 80384, "cache_write_input_tokens": 0, "output_tokens": 2532, "reasoning_output_tokens": 1148, "total_tokens": 84633}
+      },
+      "derived": {"advanced_sol_savings_tokens": -2243, "advanced_sol_savings_percent": -6.1, "routed_combined_total": 123717, "combined_delta_tokens": 86876, "combined_delta_percent": 235.8}
+    },
+    {
+      "id": 2,
+      "name": "JSONL event summary",
+      "turns": {
+        "baseline_sol": {"completed": 1, "corrections": 0},
+        "routed_sol": {"completed": 1, "corrections": 0},
+        "routed_luna": {"completed": 2, "corrections": 1}
+      },
+      "raw": {
+        "baseline_sol": {"input_tokens": 42323, "cached_input_tokens": 41728, "cache_write_input_tokens": 0, "output_tokens": 197, "reasoning_output_tokens": 131, "total_tokens": 42520},
+        "routed_sol": {"input_tokens": 45900, "cached_input_tokens": 44928, "cache_write_input_tokens": 0, "output_tokens": 432, "reasoning_output_tokens": 296, "total_tokens": 46332},
+        "routed_luna": {"input_tokens": 113772, "cached_input_tokens": 112128, "cache_write_input_tokens": 0, "output_tokens": 2764, "reasoning_output_tokens": 185, "total_tokens": 116536}
+      },
+      "derived": {"advanced_sol_savings_tokens": -3812, "advanced_sol_savings_percent": -9.0, "routed_combined_total": 162868, "combined_delta_tokens": 120348, "combined_delta_percent": 283.0}
+    },
+    {
+      "id": 3,
+      "name": "deep configuration merge",
+      "turns": {
+        "baseline_sol": {"completed": 1, "corrections": 0},
+        "routed_sol": {"completed": 1, "corrections": 0},
+        "routed_luna": {"completed": 1, "corrections": 0}
+      },
+      "raw": {
+        "baseline_sol": {"input_tokens": 47954, "cached_input_tokens": 47232, "cache_write_input_tokens": 0, "output_tokens": 189, "reasoning_output_tokens": 123, "total_tokens": 48143},
+        "routed_sol": {"input_tokens": 50533, "cached_input_tokens": 48128, "cache_write_input_tokens": 0, "output_tokens": 1033, "reasoning_output_tokens": 886, "total_tokens": 51566},
+        "routed_luna": {"input_tokens": 70830, "cached_input_tokens": 70400, "cache_write_input_tokens": 0, "output_tokens": 2596, "reasoning_output_tokens": 511, "total_tokens": 73426}
+      },
+      "derived": {"advanced_sol_savings_tokens": -3423, "advanced_sol_savings_percent": -7.1, "routed_combined_total": 124992, "combined_delta_tokens": 76849, "combined_delta_percent": 159.6}
+    }
+  ],
+  "aggregate": {
+    "raw": {
+      "baseline_sol": {"input_tokens": 126618, "cached_input_tokens": 124672, "cache_write_input_tokens": 0, "output_tokens": 886, "reasoning_output_tokens": 686, "total_tokens": 127504},
+      "routed_sol": {"input_tokens": 134885, "cached_input_tokens": 130048, "cache_write_input_tokens": 0, "output_tokens": 2097, "reasoning_output_tokens": 1686, "total_tokens": 136982},
+      "routed_luna": {"input_tokens": 266703, "cached_input_tokens": 262912, "cache_write_input_tokens": 0, "output_tokens": 7892, "reasoning_output_tokens": 1844, "total_tokens": 274595}
+    },
+    "derived": {"advanced_sol_savings_tokens": -9478, "advanced_sol_savings_percent": -7.4, "routed_combined_total": 411577, "combined_delta_tokens": 284073, "combined_delta_percent": 222.8}
+  },
+  "quality": {"own_tests": {"sol-only": {"task_1": 8, "task_2": 10, "task_3": 13}, "sol-luna": {"task_1": 8, "task_2": 10, "task_3": 12}}, "shared_verifier": {"status": "passed", "checks_per_lane": {"sol-only": 65, "sol-luna": 65}}}
+}

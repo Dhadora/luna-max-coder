@@ -1,0 +1,33 @@
+{
+  "name": "luna-max-coder",
+  "version": "0.1.0+codex.20260915132726",
+  "description": "An advanced-supervisor + Luna execution plugin: accepted non-Luna primary models are ranked by exposed Codex metadata while GPT-5.6 Luna / Max performs the routed execution.",
+  "author": {
+    "name": "Luna Max Coder"
+  },
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "orchestration",
+    "custom-agent",
+    "advanced-supervisor",
+    "gpt-5.6-luna",
+    "windows"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Luna Max Coder",
+    "shortDescription": "Keep a ranked non-Luna primary supervisor; execute with Luna Max.",
+    "longDescription": "The user-selected non-Luna primary remains the advanced supervisor when exposed Codex metadata identifies gpt-6-astra, gpt-5.6-sol, or gpt-5.6-terra; primary reasoning effort does not change this ranking, and a future model qualifies only when metadata explicitly describes it as more capable than gpt-5.6-luna. Do not infer that every non-Luna model is advanced. A native role pinned to GPT-5.6 Luna with max reasoning is the sole execution lane for code and configuration changes, every shell or terminal command after the provided non-mutating install-agent.ps1 -Check bootstrap, bulk routine exploration, interactive browser and Windows app actions, focused web/source and MCP reads, bounded authorized MCP writes, and requested bulk extraction, transformation, reporting, or image-generation tool execution. After delegation, all shell commands route to Luna; the bootstrap is the sole terminal exception. The primary may perform narrow read-only acceptance inspection. Unknown, unranked, or Luna primaries fail closed, and every requested capability, including browser, Computer Use, MCP, web, and image-generation, must be available because the plugin routes existing capabilities but does not install or guarantee them.",
+    "developerName": "Luna Max Coder",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use Luna Max Coder to keep an accepted ranked non-Luna primary as advanced supervisor and route all requested execution through GPT-5.6 Luna / Max.",
+      "Before delegation, use exposed Codex metadata to accept gpt-6-astra, gpt-5.6-sol, gpt-5.6-terra, or a future model explicitly ranked above gpt-5.6-luna; reject Luna, unknown, and unranked identities, stop rather than infer that every non-Luna model is advanced, and verify every requested capability is available. The primary may run only the provided non-mutating install-agent.ps1 -Check bootstrap before delegation; after delegation, all shell commands route to Luna."
+    ]
+  }
+}

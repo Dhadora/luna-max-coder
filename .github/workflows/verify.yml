@@ -1,0 +1,76 @@
+name: Verify
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the validation parser
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check --no-input pyyaml==6.0.2
+
+      - name: Run the plugin verifier
+        shell: pwsh
+        run: pwsh -NoProfile -File .\plugins\luna-max-coder\scripts\verify.ps1
+
+      - name: Parse the shipped data files
+        shell: pwsh
+        run: |
+          @'
+          import json
+          import tomllib
+          from pathlib import Path
+          import yaml
+
+          root = Path.cwd()
+          json.loads((root / "plugins/luna-max-coder/.codex-plugin/plugin.json").read_text(encoding="utf-8"))
+          tomllib.loads((root / "plugins/luna-max-coder/agents/luna-max-code-writer.toml").read_text(encoding="utf-8"))
+          yaml.safe_load((root / "plugins/luna-max-coder/skills/code-routing/agents/openai.yaml").read_text(encoding="utf-8"))
+          print("DATA PARSE PASSED: JSON, TOML, YAML")
+          '@ | python -
+
+      - name: Scan documentation for unfinished text and local paths
+        shell: pwsh
+        run: |
+          $paths = @(
+            "README.md",
+            "CONTRIBUTING.md",
+            "SECURITY.md",
+            "CODE_OF_CONDUCT.md",
+            "CHANGELOG.md",
+            "THIRD_PARTY_NOTICES.md",
+            "examples\README.md",
+            "plugins\luna-max-coder\.codex-plugin\plugin.json",
+            "plugins\luna-max-coder\agents\luna-max-code-writer.toml",
+            "plugins\luna-max-coder\skills\code-routing\SKILL.md",
+            "plugins\luna-max-coder\skills\code-routing\agents\openai.yaml",
+            "plugins\luna-max-coder\scripts\verify.ps1"
+          )
+          $markerOne = @("TO", "DO") -join ""
+          $markerTwo = @("FIX", "ME") -join ""
+          $markerThree = @("place", "holder") -join ""
+          $windowsUsers = "C:" + [char]92 + "Users" + [char]92
+          $unixUsers = "/" + "Users" + "/"
+          $unixHome = "/" + "home" + "/"
+          $anglePattern = [string][char]60 + "[^" + [string][char]62 + "\r\n]+" + [string][char]62
+          $pattern = ($markerOne, $markerTwo, $markerThree, $windowsUsers, $unixUsers, $unixHome, $anglePattern) -join "|"
+          $hits = Select-String -Path $paths -Pattern $pattern -AllMatches
+          if ($hits) {
+            $hits | ForEach-Object { "{0}:{1}" -f $_.Path, $_.LineNumber }
+            throw "Unfinished text or local path found."
+          }
+          Write-Output "SANITY SCAN PASSED: no unfinished text or local paths"

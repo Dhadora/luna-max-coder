@@ -1,0 +1,20 @@
+{
+  "name": "luna-max-coder",
+  "interface": {
+    "displayName": "Luna Max Coder"
+  },
+  "plugins": [
+    {
+      "name": "luna-max-coder",
+      "source": {
+        "source": "local",
+        "path": "./plugins/luna-max-coder"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
