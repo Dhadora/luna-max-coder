@@ -4,6 +4,24 @@
 
 No unreleased changes.
 
+## 0.3.0 — September 16, 2026
+
+- Restrict Luna to two explicit route kinds: `CODE_EDIT` and
+  `BROWSER_ACTION`.
+- Keep discovery, file reads, shell, SSH, Git, tests, builds, research, MCP,
+  data work, and non-browser application control in the advanced primary.
+- Limit code routes to 2 `apply_patch` calls and browser routes to 8 browser
+  calls, with 2 failed calls and 1 correction per route.
+- Prevent Luna from loading the routing skill, checking its own installation,
+  or performing project discovery before an edit.
+- Make the routing skill explicit-only to prevent recursive activation inside
+  the Luna worker.
+- Count every failed result, including path, syntax, setup, and rejected-action
+  errors, and reject disallowed tool families before execution.
+- Add a regression gate for the observed failure where an operational worker
+  made 12 shell calls, recorded 3 failures as 2, and produced no code edit or
+  browser action.
+
 ## 0.2.0 — September 16, 2026
 
 - Add a stable route ID and cumulative worker-thread ledger with default limits

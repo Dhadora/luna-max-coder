@@ -1,7 +1,7 @@
 {
   "name": "luna-max-coder",
-  "version": "0.2.0+codex.20260915210544",
-  "description": "Budgeted routing from an accepted advanced primary to GPT-5.6 Luna / Max for code and tool execution.",
+  "version": "0.3.0+codex.20260915214549",
+  "description": "Route only code edits and browser actions to GPT-5.6 Luna / Max while the selected advanced primary handles every other operation.",
   "author": {
     "name": "Luna Max Coder"
   },
@@ -18,14 +18,14 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Luna Max Coder",
-    "shortDescription": "Advanced planning with one lifetime-budgeted Luna Max execution batch.",
-    "longDescription": "An accepted non-Luna primary plans, controls permissions and risk, and reviews. One fresh GPT-5.6 Luna / Max worker performs the dependent code, shell, browser, Windows, web, and MCP batch under a cumulative lifetime budget, verifies it, and returns compact artifact evidence. Resume, correction, and browser retries cannot reset that budget. Unknown or unranked primaries, missing capabilities, and unauthorized effects fail closed. Delegation minimizes overhead but does not promise raw-token savings on every task.",
+    "shortDescription": "Advanced supervision with Luna code edits and browser actions only.",
+    "longDescription": "An accepted non-Luna primary plans, inspects files, runs shell and SSH, performs research and MCP work, executes tests, controls risk, and reviews. A fresh GPT-5.6 Luna / Max worker receives only one exact code patch or one bounded browser interaction under a cumulative lifetime budget. Mixed or operational tasks remain with the primary, and resumes cannot reset the budget.",
     "developerName": "Luna Max Coder",
     "category": "Developer Tools",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "defaultPrompt": "Use Luna Max Coder's token-saving route: verify the advanced primary and capabilities, set one cumulative lifetime budget, send one complete task to one fresh Luna Max worker, refuse budget-resetting resumes, use artifact evidence, and perform one final primary review."
+    "defaultPrompt": "Use $code-routing to keep planning, inspection, shell, tests, and review in the selected advanced primary while routing only code edits or browser actions to one bounded Luna Max worker."
   }
 }

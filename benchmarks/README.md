@@ -1,8 +1,14 @@
 # Luna Max Coder benchmarks
 
-## Current bounded-loop protocol
+## Historical v0.2 bounded-loop protocol
 
 Measurement date: **2026-09-15**
+
+These paired results measured the v0.2 route, where Luna also performed
+inspection, shell, and verification. Version 0.3 keeps those operations in the
+advanced primary and delegates only `apply_patch` code edits or browser-tool
+actions. The figures below remain reproducible historical evidence; they are not
+a measured savings claim for the narrower v0.3 route.
 
 Three fresh gpt-5.6-sol / max direct runs were compared with three fresh
 gpt-5.6-sol / max supervisors. Each supervisor delegated one four-task batch
@@ -84,6 +90,20 @@ The sanitized machine-readable aggregate and policy limits are in
 [browser-guardrail.json](browser-guardrail.json). Reported cumulative tokens
 include cached input and are not equivalent to billing or subscription usage.
 
+## Version 0.3 routing-scope regression
+
+A later operational recovery run showed why a lifetime budget alone was not
+enough. Its Luna worker made 12 shell calls, encountered 3 failed results while
+reporting only 2, and reached no code edit or browser action. Seven calls were
+issued after the second failed result. No production change occurred.
+
+Version 0.3 prevents that route from starting because the task is operational.
+The repository verifier also replays disallowed shell requests against both
+current lanes and requires zero issued worker calls. A code route accepts only
+`apply_patch` with a 2-call ceiling; a browser route accepts only browser tools
+with an 8-call ceiling. This is a deterministic policy regression, not a new
+live-model token benchmark.
+
 ## Final-request footprint
 
 For comparison with the earlier pilot, the final per-request usage record
@@ -113,10 +133,9 @@ all 63 independent checks.
 ## Static context measurement
 
 The benchmarked pre-budget revision reduced its four fixed routing files from
-15,451 to 9,640 UTF-8 bytes, **37.61%**. Adding the explicit loop budget brings
-the current installed context to 10,175 bytes, still **34.15%** below the
-original. The public export is seven bytes smaller because its manifest uses a
-shorter version string. See
+15,451 to 9,640 UTF-8 bytes, **37.61%**. The v0.2 loop-budget revision used
+10,175 bytes. The current v0.3 code-and-browser-only route uses 9,906 bytes,
+**35.89%** below the original. See
 [context-overhead.json](context-overhead.json). File bytes are not model
 tokens.
 

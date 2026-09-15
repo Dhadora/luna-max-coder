@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "measurement_date": "2026-09-15",
+  "schema_version": 3,
+  "measurement_date": "2026-09-16",
   "metric": "file_bytes",
   "encoding": "UTF-8",
   "scope": [
@@ -27,7 +27,7 @@
     "bytes": 5811,
     "percent": 37.61
   },
-  "current_loop_budget_protocol": {
+  "v020_loop_budget_protocol": {
     "manifest": 1442,
     "agent_role": 2469,
     "skill": 5661,
@@ -36,7 +36,7 @@
     "reduction_bytes": 5276,
     "reduction_percent": 34.15
   },
-  "public_export": {
+  "v020_public_export": {
     "manifest": 1435,
     "agent_role": 2469,
     "skill": 5661,
@@ -45,11 +45,20 @@
     "reduction_bytes": 5283,
     "reduction_percent": 34.19
   },
+  "current_code_browser_only_protocol": {
+    "manifest": 1410,
+    "agent_role": 2788,
+    "skill": 5283,
+    "skill_interface": 425,
+    "total": 9906,
+    "reduction_bytes": 5545,
+    "reduction_percent": 35.89
+  },
   "limitations": [
     "File bytes are not model tokens.",
     "The measurement excludes platform instructions, tool schemas, user context, cache behavior, worker reports, and execution output.",
     "Runtime results are reported separately in runtime-results.json; this static measurement alone is not evidence of runtime savings.",
-    "The benchmarked installed manifest includes a seven-byte-longer build version than the public export.",
-    "The current protocol adds an explicit bounded-loop rule after the paired benchmark; its runtime effect requires a follow-up measurement."
+    "The benchmarked installed manifest includes a seven-byte-longer build version than the v0.2 public export.",
+    "The v0.3 protocol delegates only code edits and browser actions; its runtime savings require a new paired measurement."
   ]
 }

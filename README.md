@@ -1,12 +1,9 @@
 # Luna Max Coder
 
-Luna Max Coder is an advanced-supervisor + Luna execution plugin for Windows.
-It is a Windows Codex plugin that separates supervision from execution. An
-accepted advanced primary model remains responsible for
-requirements, planning, architecture, decomposition, research synthesis, risk
-and permission decisions, confirmations, review, and final acceptance.
-GPT-5.6 Luna with max reasoning performs the delegated execution through the
-native `luna_max_code_writer` role.
+Luna Max Coder is a Windows Codex plugin that keeps supervision and operational
+work in the selected advanced primary while routing only code edits and browser
+actions to GPT-5.6 Luna with max reasoning. The native
+`luna_max_code_writer` role accepts one exact route at a time.
 
 ## Execution boundary
 
@@ -17,75 +14,61 @@ qualifies only when that metadata explicitly describes it as more capable than
 that every non-Luna model is advanced, silently switch the primary, or add a
 reviewer.
 
-Luna is the sole execution lane for:
+The plugin exposes two route kinds:
 
-- every code, configuration, test, schema, migration, build, generated,
-  formatting, and autofix mutation;
-- every shell or terminal command after the bootstrap exception, including
-  tests, lint, type checks, diagnostics, logs, process management, and scripted
-  inspection;
-- bulk codebase exploration, including file search, call-site discovery,
-  dependency mapping, and routine read-only inspection;
-- every interactive browser action and local web test, plus mechanical Windows
-  app and Computer Use actions outside the browser;
-- focused web or source collection and routine MCP reads;
-- bounded MCP writes and external actions after the primary defines the exact
-  scope, assesses risk, and records authorization or user confirmation; and
-- requested bulk extraction, classification, transformation, structured
-  reporting, and image-generation execution or variant production after the
-  primary chooses the concept, constraints, and accepted result.
+- `CODE_EDIT`: Luna receives exact current context and uses `apply_patch` only.
+- `BROWSER_ACTION`: Luna uses only the named browser controller against the
+  named browser target.
 
-Before task execution, verify that every capability the task requests is
-available to the worker, including browser, Computer Use, MCP, web, and image
-generation.
+The primary performs repository discovery, file and code reads, shell and SSH,
+Git, web research, MCP and data operations, non-browser Windows control,
+diagnostics, linting, tests and builds. It also owns planning, permissions,
+review, and acceptance. An operational task that contains no code edit or
+browser action does not start Luna.
+
+For code work, the primary supplies the exact target and patch anchors. Luna
+writes the code, then the primary reviews the diff and runs all checks. For
+browser work, the primary supplies the browser, target, allowed interactions,
+side effects, confirmation state, and required evidence. Luna does not use
+shell, source inspection, web search, MCP, or another application as a browser
+fallback.
+
 This plugin routes existing capabilities; it does not install or guarantee
-them. The primary may run the provided non-mutating `install-agent.ps1 -Check`
-bootstrap before Luna is available. That is the sole terminal bootstrap
-exception. After delegation, every shell command routes to Luna. The primary
-may perform narrow read-only acceptance inspection, but it does not resume
-shell execution.
+them. The primary runs the non-mutating `install-agent.ps1 -Check` bootstrap.
+The Luna worker never loads the routing skill or performs self-bootstrap.
 
 High-impact, destructive, irreversible, credential-bearing, financial,
 public-posting, message-sending, upload, and permission-changing actions remain
-primary decisions. Luna performs only the exact bounded action after the
-normal authorization or user-confirmation boundary is established. Luna never
-bypasses authentication or a required confirmation. If a role, model ranking,
-requested capability, or confirmation is unavailable, routing fails closed.
+primary decisions. Luna performs only the authorized code edit or browser
+action and never bypasses authentication or a required confirmation.
 
 ## Token-saving route
 
-The default route uses one primary plan, one self-contained handoff to one fresh
-Luna worker, one complete dependent execution batch, deterministic checks, and
-one final primary review. Luna passes artifact paths, hashes, check counts,
-decisions, and gaps instead of pasting code, diffs, logs, DOM, or screenshots.
-Inside the batch, Luna defaults to one batched inspection, one consolidated
-edit, one consolidated verification, and at most one targeted repair and
-recheck. Corrections are short deltas to the same worker. A checkpoint remains
-mandatory before a risky or irreversible action.
+The primary completes discovery and planning before spawning one fresh Luna
+worker with no conversation history. A code route normally needs one patch
+call. A browser route uses one filtered preflight, a bounded action sequence,
+and one filtered postflight. Luna returns compact artifact evidence, and the
+primary performs all verification and one final review.
 
 ### Lifetime execution budget
 
-Every delegation now carries a stable route ID and a cumulative ledger with
-default ceilings of 12 tool calls, 2 failed tool calls, and 1 correction. The
-ledger covers the full worker thread and cannot reset on interruption,
-compaction, correction, handoff, or a later turn. A bare `RESUME`, an
-inconsistent ledger, an exhausted budget, `STOP`, or a terminal handoff ends
-the route instead of silently starting another execution loop. Only explicit
-user approval in the original delegation may raise a default. Success, stop,
-safety, and exhausted-budget handoffs are terminal; a nonterminal handoff is
-reserved for the one repairable correction that still has budget.
+Every delegation carries a route kind, stable route ID, and cumulative ledger.
+`CODE_EDIT` allows 2 `apply_patch` calls, 2 failed calls, and 1 correction.
+`BROWSER_ACTION` allows 8 browser-tool calls, 2 failed calls, and 1 correction.
+Every failure counts, including path, syntax, setup, and rejected-action
+errors. A disallowed tool is rejected before execution.
 
-Interactive work also stops after 90 seconds without an observable state
-change. Each tool result is limited to 4,000 characters, raw DOM and large
-source or log dumps are excluded, and browser-control fallbacks must be named
-in the original brief. `STOP` allows no cleanup or status-inspection call; the
-worker reports only evidence it already holds.
+The ledger cannot reset on interruption, compaction, correction, handoff, or a
+later turn. A bare `RESUME`, inconsistent ledger, exhausted budget, `STOP`, or
+terminal handoff ends the route. Only explicit user approval in the original
+delegation may raise a default.
 
-This minimizes fixed delegation overhead but does not guarantee fewer raw
-tokens on every task. Small tasks can cost more when delegated, and cached-input
-savings affect cost rather than reported total tokens. Maximum-supervision mode
-adds checkpoints when requested or required and prioritizes control over token
-savings.
+Browser work stops after 90 seconds without observable progress. Each result is
+limited to 4,000 characters, and `STOP` allows no cleanup or inspection call.
+
+This removes Luna from operational tool loops that caused unnecessary calls. It
+still does not guarantee fewer raw tokens on every task; the published runtime
+measurements predate this narrower route and are retained as historical data.
 
 ## Prerequisites and limitations
 
@@ -125,10 +108,11 @@ pwsh -NoProfile -File .\plugins\luna-max-coder\scripts\verify.ps1
 ~~~
 
 Start a new Codex conversation after installing or updating the plugin so the
-skill and native role are discovered. Activate it with:
+skill and native role are discovered. The routing skill is explicit-only so a
+Luna worker cannot activate it recursively. Activate it with:
 
 ~~~text
-Use $luna-max-coder:code-routing to supervise with the accepted advanced primary and route the requested execution through Luna Max.
+Use $luna-max-coder:code-routing to keep operational work in the advanced primary and route only code edits or browser actions through Luna Max.
 ~~~
 
 ## Upgrade and uninstall
@@ -166,6 +150,8 @@ when you no longer need this source.
   install or guarantee capabilities.
 - If a role, capability, authorization, or confirmation is unavailable, do not
   use a fallback. Resolve the boundary in the primary conversation.
+- If the task contains only shell, SSH, inspection, research, MCP, data, tests,
+  or non-browser application work, keep it entirely in the primary.
 - Do not send `RESUME` after a stop or terminal handoff. Start a new route only
   after the user explicitly authorizes a new attempt and the primary records a
   new scope and budget.
@@ -185,4 +171,5 @@ through the process in [SECURITY.md](SECURITY.md) and review the attribution in
 
 ## Benchmarks
 
-See [benchmarks/README.md](benchmarks/README.md) for the paired token measurements and independent behavior checks.
+See [benchmarks/README.md](benchmarks/README.md) for historical paired token
+measurements and the current routing-scope regression checks.

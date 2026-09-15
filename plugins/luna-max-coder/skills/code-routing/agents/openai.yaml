@@ -1,10 +1,9 @@
 interface:
   display_name: "Luna Max Code Routing"
-  short_description: "Plan with an advanced primary; batch execution through Luna Max"
+  short_description: "Luna edits code or controls a browser; the primary does the rest"
   default_prompt: >-
-    Use $code-routing to verify the accepted advanced primary and capabilities,
-    set one stable route with a cumulative 12-call, 2-failure, 1-correction
-    lifetime ledger, delegate one complete batch to one fresh Luna worker,
-    refuse resets or bare resumes, and review compact artifact evidence once.
+    Use $code-routing to keep discovery, reads, shell, SSH, tests, research, MCP,
+    and review in the selected advanced primary, and route only one exact code
+    edit or one bounded browser action to Luna Max.
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

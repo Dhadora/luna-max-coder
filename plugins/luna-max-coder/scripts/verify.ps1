@@ -16,6 +16,13 @@ function Assert-Contains {
     Assert-True ($haystack.IndexOf($target, [StringComparison]::OrdinalIgnoreCase) -ge 0) "$Owner omits: $Needle"
 }
 
+function Assert-NotContains {
+    param([string]$Text, [string]$Needle, [string]$Owner)
+    $haystack = [regex]::Replace($Text, '\s+', ' ')
+    $target = [regex]::Replace($Needle, '\s+', ' ')
+    Assert-True ($haystack.IndexOf($target, [StringComparison]::OrdinalIgnoreCase) -lt 0) "$Owner still contains forbidden routing: $Needle"
+}
+
 function Get-WindowsUtf8ByteCount {
     param([string]$Text)
     $windowsText = [regex]::Replace($Text, '\r?\n', "`r`n")
@@ -43,11 +50,28 @@ $readme = Get-Content -Raw -LiteralPath $readmePath
 $guardrail = Get-Content -Raw -LiteralPath $guardrailPath | ConvertFrom-Json
 
 Assert-True ($manifest.name -eq "luna-max-coder") "Manifest name is incorrect."
-Assert-True ($manifest.version -match '^0\.2\.0(?:\+codex\.[0-9A-Za-z.-]+)?$') "Manifest version is incorrect."
+Assert-True ($manifest.version -match '^0\.3\.0(?:\+codex\.[0-9A-Za-z.-]+)?$') "Manifest version is incorrect."
 Assert-True ($manifest.interface.displayName -eq "Luna Max Coder") "Manifest display name is incorrect."
 Assert-True ($marketplace.name -eq "luna-max-coder") "Marketplace name is incorrect."
 Assert-True ($marketplace.plugins.Count -eq 1) "Marketplace must expose one plugin."
 Assert-True ($marketplace.plugins[0].name -eq "luna-max-coder") "Marketplace plugin name is incorrect."
+
+foreach ($term in @(
+    "ROUTE_KIND",
+    "CODE_EDIT",
+    "BROWSER_ACTION",
+    "primary owns shell, SSH",
+    "tests and builds",
+    '`apply_patch` only',
+    "browser tools only"
+)) { Assert-Contains ($skill + "`n" + $agent) $term "Routing scope" }
+
+foreach ($term in @(
+    "Luna is the sole lane for",
+    "every shell command",
+    "routine MCP reads",
+    "image generation"
+)) { Assert-NotContains $skill $term "Skill" }
 
 foreach ($exact in @(
     'name = "luna_max_code_writer"',
@@ -65,36 +89,39 @@ foreach ($term in @(
     "fail closed",
     "luna_max_code_writer",
     "max reasoning",
-    "sole terminal bootstrap exception",
-    "every capability the task needs",
+    "primary runs this check",
+    "exact role, model, and effort",
     "does not install or guarantee them",
-    "Default token-saving route",
+    'exactly one `ROUTE_KIND`',
+    "If a task contains neither, do not spawn Luna",
+    "primary owns shell, SSH",
+    "tests and builds",
+    "Luna never performs discovery or self-bootstrap",
+    '`apply_patch` only',
+    'only nested operation is `apply_patch`',
+    'must not use `exec_command`',
+    "primary reviews the diff and runs every check",
+    "browser tools only",
     'fork_turns: "none"',
     "ROUTE_ID",
     "BUDGET_LEDGER",
-    "calls=0/12; failures=0/2; followups=0/1",
-    "never reset after interruption",
-    "checks the ledger before every tool call",
+    "calls=0/2; failures=0/2; followups=0/1",
+    "calls=0/8; failures=0/2; followups=0/1",
+    "checks the route kind, permitted tool family, and ledger before every call",
+    "Count every issued call and every failed result",
+    "Never exclude a failure",
+    "Limits never reset after",
     "Only explicit user approval",
-    "one complete handoff",
-    "one batched inspection",
-    "one consolidated edit",
-    "one consolidated verification",
-    "one targeted repair",
-    "at most 1,200 characters",
-    "Do not paste code, diffs, raw logs, DOM, or screenshots",
-    "deterministic checks",
-    "one final review",
-    'Never send a bare `RESUME`',
-    'A `STOP` instruction permits zero further tool calls',
-    '`terminal=false` is only',
+    "zero additional calls",
+    "Never replace the worker to reset limits",
+    "A successful route is terminal",
+    '`terminal=false` is allowed only',
     "90 seconds without an observable state change",
     "4,000 characters",
-    "does not promise fewer raw tokens",
-    "Luna is the sole lane",
-    "every shell command",
-    "every interactive browser action",
-    "narrow read-only acceptance inspection",
+    "at most 1,000 characters",
+    "artifact evidence",
+    "primary performs the final review and all verification",
+    'Do not mention `$code-routing`',
     "BROWSER LIMITS",
     "public-posting",
     "Never bypass authentication"
@@ -102,64 +129,70 @@ foreach ($term in @(
 
 foreach ($field in @(
     "OUTCOME",
+    "ROUTE_KIND",
     "OWNED TARGETS",
+    "CURRENT CONTEXT",
     "CONSTRAINTS AND EXCLUSIONS",
     "EXECUTION ENVELOPE",
-    "PERMITTED TOOLS/ACTIONS",
     "SIDE-EFFECT / CONFIRMATION STATUS",
-    "CHECKS / OBSERVABLE PROOF",
-    "STOP CONDITIONS",
-    "HANDOFF"
+    "OBSERVABLE PROOF",
+    "STOP CONDITIONS"
 )) { Assert-Contains $skill $field "Delegation brief" }
 
 foreach ($term in @(
-    "sole execution worker",
-    "advanced supervisor",
-    "gpt-5.6-sol",
-    "calls=0/12; failures=0/2; followups=0/1",
-    "never reset after",
-    "Check the ledger before every",
-    "Only explicit",
-    "Refuse a bare",
-    "permits zero further tool calls",
-    '`terminal=false` is only',
-    "90 seconds without observable change",
+    "limited to one code patch or one browser",
+    "accepted advanced supervisor",
+    "discovery, reads, shell, SSH, tests and builds",
+    "Never load SKILL.md",
+    '`apply_patch` only',
+    'one nested operation: `apply_patch`',
+    'never use `exec_command`',
+    "browser tools only",
+    "calls=0/2; failures=0/2; followups=0/1",
+    "calls=0/8; failures=0/2; followups=0/1",
+    "Count every issued call and every failed result",
+    "never exclude a failure",
+    "Stop immediately at a limit",
+    "Counters never reset after",
+    "Only explicit user approval",
+    'Refuse bare `RESUME`',
+    '`STOP` permits zero further tool calls',
+    "disallowed tool request is terminal",
+    "A successful route is terminal",
+    'Use `terminal=false` only',
+    "90 seconds without observable progress",
     "4,000 characters",
-    "one consolidated edit",
-    "one consolidated verification",
-    "one targeted repair",
-    "at most 1,200 characters",
-    "Do not paste code, diffs, raw logs, DOM, or screenshots",
+    "at most 1,000 characters",
     "Preserve user and concurrent edits",
     "Never bypass authentication or confirmation"
 )) { Assert-Contains $agent $term "Agent role" }
 
 foreach ($term in @(
-    "one fresh Luna worker",
-    "one complete batch",
-    "cumulative 12-call",
-    "2-failure",
-    "1-correction",
-    "refuse resets or bare resumes",
-    "compact artifact evidence",
-    "allow_implicit_invocation: true"
+    "keep discovery, reads, shell, SSH, tests, research, MCP",
+    "one exact code edit",
+    "one bounded browser action",
+    "allow_implicit_invocation: false"
 )) { Assert-Contains $interface $term "Skill interface" }
 
 foreach ($term in @(
     "Token-saving route",
-    "one fresh Luna worker",
-    "deterministic checks",
-    "guarantee fewer raw tokens",
-    "maximum-supervision"
+    "CODE_EDIT",
+    "BROWSER_ACTION",
+    "apply_patch",
+    "shell and SSH",
+    "tests and builds",
+    "does not start Luna",
+    '2 `apply_patch` calls',
+    "8 browser-tool calls",
+    "historical data"
 )) { Assert-Contains $readme $term "README" }
 
 foreach ($term in @(
-    "token-saving",
-    "one fresh",
-    "cumulative lifetime budget",
-    "Resume, correction, and browser retries cannot reset",
-    "artifact evidence",
-    "does not promise raw-token savings"
+    "only code edits and browser actions",
+    "shell and SSH",
+    "one exact code patch",
+    "one bounded browser interaction",
+    "operational tasks remain with the primary"
 )) {
     Assert-Contains $manifestText $term "Manifest"
 }
@@ -184,7 +217,13 @@ Assert-True (($usage.input_tokens + $usage.output_tokens) -eq $usage.total_token
 Assert-True ($usage.reasoning_output_tokens -le $usage.output_tokens) "Reasoning output must be a subset of output."
 
 function Invoke-PolicyReplay {
-    param([object[]]$Events, [object]$Limits, [string]$RouteId = "route-test")
+    param(
+        [object[]]$Events,
+        [object]$Limits,
+        [string]$RouteId = "route-test",
+        [string]$RouteKind = "",
+        [string]$AllowedToolFamily = ""
+    )
 
     $state = [ordered]@{ Calls = 0; Failures = 0; Followups = 0; Rejected = 0; Terminal = $false }
     foreach ($event in $Events) {
@@ -194,7 +233,11 @@ function Invoke-PolicyReplay {
         }
 
         if ($event.kind -eq "tool") {
-            if ($state.Calls -ge $Limits.max_tool_calls -or $state.Failures -ge $Limits.max_failed_tool_calls) {
+            $eventToolFamily = if ($event.PSObject.Properties.Name -contains "tool_family") { [string]$event.tool_family } else { "" }
+            if ($AllowedToolFamily -and $eventToolFamily -ne $AllowedToolFamily) {
+                $state.Terminal = $true
+                $state.Rejected++
+            } elseif ($state.Calls -ge $Limits.max_tool_calls -or $state.Failures -ge $Limits.max_failed_tool_calls) {
                 $state.Terminal = $true
                 $state.Rejected++
             } else {
@@ -205,10 +248,12 @@ function Invoke-PolicyReplay {
                 }
             }
         } elseif ($event.kind -eq "correction") {
+            $eventRouteKind = if ($event.PSObject.Properties.Name -contains "route_kind") { [string]$event.route_kind } else { "" }
             $exactLedger = $event.route_id -eq $RouteId -and
                 $event.calls -eq $state.Calls -and
                 $event.failures -eq $state.Failures -and
-                $event.followups -eq $state.Followups
+                $event.followups -eq $state.Followups -and
+                (-not $RouteKind -or $eventRouteKind -eq $RouteKind)
             if (-not $exactLedger -or $state.Followups -ge $Limits.max_followups) {
                 $state.Terminal = $true
                 $state.Rejected++
@@ -256,6 +301,32 @@ $observedReplayEvents = @(1..$guardrail.observed.tool_calls | ForEach-Object {
 $observedReplay = Invoke-PolicyReplay $observedReplayEvents $limits
 Assert-True ($observedReplay.Calls -eq $limits.max_tool_calls) "Observed stress trace escaped the lifetime call ceiling."
 Assert-True ($observedReplay.Rejected -eq ($guardrail.observed.tool_calls - $limits.max_tool_calls)) "Observed stress trace rejection count is incorrect."
+
+$codeLimits = [pscustomobject]@{ max_tool_calls = 2; max_failed_tool_calls = 2; max_followups = 1 }
+$browserLimits = [pscustomobject]@{ max_tool_calls = 8; max_failed_tool_calls = 2; max_followups = 1 }
+
+$operationalCodeReplay = Invoke-PolicyReplay @(
+    [pscustomobject]@{ kind = "tool"; tool_family = "shell"; status = "completed" }
+) $codeLimits "code-route" "CODE_EDIT" "apply_patch"
+Assert-True ($operationalCodeReplay.Calls -eq 0 -and $operationalCodeReplay.Rejected -eq 1 -and $operationalCodeReplay.Terminal) "CODE_EDIT issued an operational tool call."
+
+$operationalBrowserReplay = Invoke-PolicyReplay @(
+    [pscustomobject]@{ kind = "tool"; tool_family = "shell"; status = "completed" }
+) $browserLimits "browser-route" "BROWSER_ACTION" "browser"
+Assert-True ($operationalBrowserReplay.Calls -eq 0 -and $operationalBrowserReplay.Rejected -eq 1 -and $operationalBrowserReplay.Terminal) "BROWSER_ACTION issued a non-browser tool call."
+
+$codeBudgetReplay = Invoke-PolicyReplay @(
+    [pscustomobject]@{ kind = "tool"; tool_family = "apply_patch"; status = "completed" },
+    [pscustomobject]@{ kind = "tool"; tool_family = "apply_patch"; status = "completed" },
+    [pscustomobject]@{ kind = "tool"; tool_family = "apply_patch"; status = "completed" }
+) $codeLimits "code-route" "CODE_EDIT" "apply_patch"
+Assert-True ($codeBudgetReplay.Calls -eq 2 -and $codeBudgetReplay.Rejected -eq 1) "CODE_EDIT exceeded its two-patch budget."
+
+$browserBudgetEvents = @(1..9 | ForEach-Object {
+    [pscustomobject]@{ kind = "tool"; tool_family = "browser"; status = "completed" }
+})
+$browserBudgetReplay = Invoke-PolicyReplay $browserBudgetEvents $browserLimits "browser-route" "BROWSER_ACTION" "browser"
+Assert-True ($browserBudgetReplay.Calls -eq 8 -and $browserBudgetReplay.Rejected -eq 1) "BROWSER_ACTION exceeded its eight-call budget."
 
 $coreBytes = Get-WindowsUtf8ByteCount ($skill + $agent + $interface + $manifestText)
 Assert-True ($coreBytes -lt 12500) "Core routing context exceeded the 12,500-byte budget: $coreBytes"
@@ -307,4 +378,4 @@ try {
     }
 }
 
-Write-Output "VERIFY PASSED: routing has a cumulative lifetime budget, deterministic replay, compact context, and update safety ($coreBytes core bytes)."
+Write-Output "VERIFY PASSED: Luna is restricted to code patches and browser actions with lane budgets, deterministic replay, compact context, and update safety ($coreBytes core bytes)."
