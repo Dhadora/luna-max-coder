@@ -26,6 +26,8 @@ No unreleased changes.
   with compact artifact evidence and exception-only escalation.
 - Add an update path that backs up an existing native role before atomic
   replacement and validates fixed routing-context size.
+- Measure context limits with Windows line endings so local verification and CI
+  enforce the same budget.
 - Add a 12-task paired runtime benchmark and retain the original unbounded
   result as historical evidence. In the preliminary bounded sample, advanced
   Sol tokens fell 72.1% and combined raw Sol and Luna tokens fell 29.1%.

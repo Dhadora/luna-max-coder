@@ -16,6 +16,12 @@ function Assert-Contains {
     Assert-True ($haystack.IndexOf($target, [StringComparison]::OrdinalIgnoreCase) -ge 0) "$Owner omits: $Needle"
 }
 
+function Get-WindowsUtf8ByteCount {
+    param([string]$Text)
+    $windowsText = [regex]::Replace($Text, '\r?\n', "`r`n")
+    return [Text.Encoding]::UTF8.GetByteCount($windowsText)
+}
+
 $pluginDir = Split-Path -Parent $PSScriptRoot
 $repoDir = Split-Path -Parent (Split-Path -Parent $pluginDir)
 $manifestPath = Join-Path $pluginDir ".codex-plugin\plugin.json"
@@ -251,10 +257,10 @@ $observedReplay = Invoke-PolicyReplay $observedReplayEvents $limits
 Assert-True ($observedReplay.Calls -eq $limits.max_tool_calls) "Observed stress trace escaped the lifetime call ceiling."
 Assert-True ($observedReplay.Rejected -eq ($guardrail.observed.tool_calls - $limits.max_tool_calls)) "Observed stress trace rejection count is incorrect."
 
-$coreBytes = [Text.Encoding]::UTF8.GetByteCount($skill + $agent + $interface + $manifestText)
+$coreBytes = Get-WindowsUtf8ByteCount ($skill + $agent + $interface + $manifestText)
 Assert-True ($coreBytes -lt 12500) "Core routing context exceeded the 12,500-byte budget: $coreBytes"
-Assert-True ([Text.Encoding]::UTF8.GetByteCount($skill) -lt 6500) "SKILL.md exceeded its context budget."
-Assert-True ([Text.Encoding]::UTF8.GetByteCount($agent) -lt 3000) "Agent role exceeded its context budget."
+Assert-True ((Get-WindowsUtf8ByteCount $skill) -lt 6500) "SKILL.md exceeded its Windows context budget."
+Assert-True ((Get-WindowsUtf8ByteCount $agent) -lt 3000) "Agent role exceeded its Windows context budget."
 
 $allOwnedText = $manifestText + "`n" + $agent + "`n" + $skill + "`n" + $interface + "`n" + $readme
 foreach ($marker in @((@('TO', 'DO') -join ''), (@('FIX', 'ME') -join ''))) {
