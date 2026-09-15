@@ -63,7 +63,7 @@ jobs:
           $markerOne = @("TO", "DO") -join ""
           $markerTwo = @("FIX", "ME") -join ""
           $markerThree = @("place", "holder") -join ""
-          $windowsUsers = "C:" + [char]92 + "Users" + [char]92
+          $windowsUsers = [regex]::Escape("C:" + [char]92 + "Users" + [char]92)
           $unixUsers = "/" + "Users" + "/"
           $unixHome = "/" + "home" + "/"
           $anglePattern = [string][char]60 + "[^" + [string][char]62 + "\r\n]+" + [string][char]62
